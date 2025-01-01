@@ -8,6 +8,7 @@ import { FormulaDisplay } from "@/components/FormulaDisplay";
 import { ActionButtons } from "@/components/ActionButtons";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Subject {
   code: string;
@@ -34,6 +35,7 @@ const Index = () => {
   );
   const [newSubject, setNewSubject] = useState({ code: "", name: "", credits: "" });
   const resultsRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   const calculateSGPA = () => {
     let totalPoints = 0;
@@ -63,7 +65,30 @@ const Index = () => {
       setSubjects(updatedSubjects);
       setGrades((prev) => ({ ...prev, [newSubject.code]: "" }));
       setNewSubject({ code: "", name: "", credits: "" });
+      toast({
+        title: "Subject Added",
+        description: "New subject has been added successfully.",
+      });
     }
+  };
+
+  const handleUpdateSubject = (index: number, code: string, name: string, credits: number) => {
+    const updatedSubjects = [...subjects];
+    const oldCode = subjects[index].code;
+    updatedSubjects[index] = { code, name, credits };
+    setSubjects(updatedSubjects);
+    
+    if (oldCode !== code) {
+      const newGrades = { ...grades };
+      newGrades[code] = newGrades[oldCode];
+      delete newGrades[oldCode];
+      setGrades(newGrades);
+    }
+    
+    toast({
+      title: "Subject Updated",
+      description: "Subject details have been updated successfully.",
+    });
   };
 
   const handleRemoveSubject = (code: string) => {
@@ -71,6 +96,10 @@ const Index = () => {
     const newGrades = { ...grades };
     delete newGrades[code];
     setGrades(newGrades);
+    toast({
+      title: "Subject Removed",
+      description: "Subject has been removed successfully.",
+    });
   };
 
   const handleDownloadPDF = async () => {
@@ -78,22 +107,48 @@ const Index = () => {
       const canvas = await html2canvas(resultsRef.current);
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      // Add logo
+      const logo = new Image();
+      logo.src = '/placeholder.svg';
+      pdf.addImage(logo, 'SVG', 10, 10, 30, 30);
+      
+      // Add title
+      pdf.setFontSize(20);
+      pdf.text('VTU SGPA Scorecard', 50, 25);
+      
+      // Add scorecard content
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('sgpa-scorecard.pdf');
+      pdf.addImage(imgData, 'PNG', 0, 45, pdfWidth, pdfHeight);
+      
+      pdf.save('vtu-sgpa-scorecard.pdf');
+      
+      toast({
+        title: "PDF Generated",
+        description: "Your scorecard has been downloaded successfully.",
+      });
     }
   };
 
   const handleShare = async () => {
     try {
       await navigator.share({
-        title: 'My SGPA Scorecard',
+        title: 'My VTU SGPA Scorecard',
         text: `My SGPA: ${results.sgpa.toFixed(2)}`,
         url: window.location.href
       });
+      toast({
+        title: "Shared Successfully",
+        description: "Your scorecard has been shared.",
+      });
     } catch (error) {
       console.log('Sharing failed:', error);
+      toast({
+        title: "Sharing Failed",
+        description: "Unable to share the scorecard. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -108,15 +163,16 @@ const Index = () => {
         </div>
 
         <div className="bg-white rounded-xl p-6 shadow-lg">
-          <div className="grid grid-cols-4 gap-4 mb-4 px-4 text-sm font-medium text-gray-500">
+          <div className="grid grid-cols-5 gap-4 mb-4 px-4 text-sm font-medium text-gray-500">
             <div>Code</div>
             <div>Subject</div>
             <div className="text-center">Credits</div>
-            <div className="text-right">Grade</div>
+            <div>Grade</div>
+            <div className="text-right">Actions</div>
           </div>
 
           <div className="space-y-2">
-            {subjects.map((subject) => (
+            {subjects.map((subject, index) => (
               <SubjectRow
                 key={subject.code}
                 subjectCode={subject.code}
@@ -127,12 +183,15 @@ const Index = () => {
                   setGrades((prev) => ({ ...prev, [subject.code]: grade }))
                 }
                 onRemove={() => handleRemoveSubject(subject.code)}
+                onUpdate={(code, name, credits) => 
+                  handleUpdateSubject(index, code, name, credits)
+                }
               />
             ))}
           </div>
 
           <div className="mt-4 space-y-4">
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-5 gap-4">
               <Input
                 placeholder="Code"
                 value={newSubject.code}
@@ -155,12 +214,14 @@ const Index = () => {
                   setNewSubject((prev) => ({ ...prev, credits: e.target.value }))
                 }
               />
-              <Button
-                onClick={handleAddSubject}
-                className="w-full flex items-center justify-center gap-2"
-              >
-                <Plus className="h-4 w-4" /> Add Subject
-              </Button>
+              <div className="col-span-2">
+                <Button
+                  onClick={handleAddSubject}
+                  className="w-full flex items-center justify-center gap-2"
+                >
+                  <Plus className="h-4 w-4" /> Add Subject
+                </Button>
+              </div>
             </div>
           </div>
         </div>
