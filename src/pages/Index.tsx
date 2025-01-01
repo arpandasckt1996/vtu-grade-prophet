@@ -136,23 +136,45 @@ const Index = () => {
   };
 
   const handleShare = async () => {
-    try {
-      await navigator.share({
-        title: 'My VTU SGPA Scorecard',
-        text: `My SGPA: ${results.sgpa.toFixed(2)}`,
-        url: window.location.href
-      });
-      toast({
-        title: "Shared Successfully",
-        description: "Your scorecard has been shared.",
-      });
-    } catch (error) {
-      console.log('Sharing failed:', error);
-      toast({
-        title: "Sharing Failed",
-        description: "Unable to share the scorecard. Please try again.",
-        variant: "destructive",
-      });
+    const shareData = {
+      title: 'VTU SGPA Scorecard',
+      text: `My SGPA: ${results.sgpa.toFixed(2)}\nTotal Credits: ${results.totalCredits}\nTotal Points: ${results.totalPoints.toFixed(2)}`,
+      url: window.location.href
+    };
+
+    if (navigator.share && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        toast({
+          title: "Shared Successfully",
+          description: "Your scorecard has been shared.",
+        });
+      } catch (error) {
+        if (error instanceof Error && error.name !== 'AbortError') {
+          toast({
+            title: "Sharing Failed",
+            description: "Unable to share. Try copying the results instead.",
+            variant: "destructive",
+          });
+        }
+      }
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      try {
+        await navigator.clipboard.writeText(
+          `VTU SGPA Scorecard\n\nSGPA: ${results.sgpa.toFixed(2)}\nTotal Credits: ${results.totalCredits}\nTotal Points: ${results.totalPoints.toFixed(2)}\n\nView more at: ${window.location.href}`
+        );
+        toast({
+          title: "Results Copied",
+          description: "Scorecard details have been copied to clipboard.",
+        });
+      } catch (error) {
+        toast({
+          title: "Action Failed",
+          description: "Unable to copy results. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
