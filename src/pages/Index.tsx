@@ -1,8 +1,17 @@
 import { useState } from "react";
 import { SubjectRow } from "@/components/SubjectRow";
 import { ResultCard } from "@/components/ResultCard";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
 
-const subjects = [
+interface Subject {
+  code: string;
+  name: string;
+  credits: number;
+}
+
+const defaultSubjects = [
   { code: "XX11", name: "Subject 1", credits: 3 },
   { code: "XX12", name: "Subject 2", credits: 3 },
   { code: "XX13", name: "Subject 3", credits: 3 },
@@ -15,9 +24,11 @@ const subjects = [
 ];
 
 const Index = () => {
+  const [subjects, setSubjects] = useState<Subject[]>(defaultSubjects);
   const [grades, setGrades] = useState<Record<string, string>>(
     Object.fromEntries(subjects.map((s) => [s.code, ""]))
   );
+  const [newSubject, setNewSubject] = useState({ code: "", name: "", credits: "" });
 
   const calculateSGPA = () => {
     let totalPoints = 0;
@@ -36,6 +47,25 @@ const Index = () => {
       totalCredits,
       totalPoints,
     };
+  };
+
+  const handleAddSubject = () => {
+    if (newSubject.code && newSubject.name && newSubject.credits) {
+      const updatedSubjects = [
+        ...subjects,
+        { ...newSubject, credits: Number(newSubject.credits) },
+      ];
+      setSubjects(updatedSubjects);
+      setGrades((prev) => ({ ...prev, [newSubject.code]: "" }));
+      setNewSubject({ code: "", name: "", credits: "" });
+    }
+  };
+
+  const handleRemoveSubject = (code: string) => {
+    setSubjects(subjects.filter((s) => s.code !== code));
+    const newGrades = { ...grades };
+    delete newGrades[code];
+    setGrades(newGrades);
   };
 
   const results = calculateSGPA();
@@ -67,8 +97,42 @@ const Index = () => {
                 onGradeChange={(grade) =>
                   setGrades((prev) => ({ ...prev, [subject.code]: grade }))
                 }
+                onRemove={() => handleRemoveSubject(subject.code)}
               />
             ))}
+          </div>
+
+          <div className="mt-4 space-y-4">
+            <div className="grid grid-cols-4 gap-4">
+              <Input
+                placeholder="Code"
+                value={newSubject.code}
+                onChange={(e) =>
+                  setNewSubject((prev) => ({ ...prev, code: e.target.value }))
+                }
+              />
+              <Input
+                placeholder="Subject Name"
+                value={newSubject.name}
+                onChange={(e) =>
+                  setNewSubject((prev) => ({ ...prev, name: e.target.value }))
+                }
+              />
+              <Input
+                type="number"
+                placeholder="Credits"
+                value={newSubject.credits}
+                onChange={(e) =>
+                  setNewSubject((prev) => ({ ...prev, credits: e.target.value }))
+                }
+              />
+              <Button
+                onClick={handleAddSubject}
+                className="w-full flex items-center justify-center gap-2"
+              >
+                <Plus className="h-4 w-4" /> Add Subject
+              </Button>
+            </div>
           </div>
         </div>
 
