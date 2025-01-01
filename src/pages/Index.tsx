@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { SubjectRow } from "@/components/SubjectRow";
 import { ResultCard } from "@/components/ResultCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
+import { FormulaDisplay } from "@/components/FormulaDisplay";
+import { ActionButtons } from "@/components/ActionButtons";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 interface Subject {
   code: string;
@@ -29,6 +33,7 @@ const Index = () => {
     Object.fromEntries(subjects.map((s) => [s.code, ""]))
   );
   const [newSubject, setNewSubject] = useState({ code: "", name: "", credits: "" });
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const calculateSGPA = () => {
     let totalPoints = 0;
@@ -66,6 +71,30 @@ const Index = () => {
     const newGrades = { ...grades };
     delete newGrades[code];
     setGrades(newGrades);
+  };
+
+  const handleDownloadPDF = async () => {
+    if (resultsRef.current) {
+      const canvas = await html2canvas(resultsRef.current);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('sgpa-scorecard.pdf');
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      await navigator.share({
+        title: 'My SGPA Scorecard',
+        text: `My SGPA: ${results.sgpa.toFixed(2)}`,
+        url: window.location.href
+      });
+    } catch (error) {
+      console.log('Sharing failed:', error);
+    }
   };
 
   const results = calculateSGPA();
@@ -136,10 +165,21 @@ const Index = () => {
           </div>
         </div>
 
-        <ResultCard
-          sgpa={results.sgpa}
-          totalCredits={results.totalCredits}
-          totalPoints={results.totalPoints}
+        <div ref={resultsRef} className="space-y-6">
+          <ResultCard
+            sgpa={results.sgpa}
+            totalCredits={results.totalCredits}
+            totalPoints={results.totalPoints}
+          />
+          <FormulaDisplay
+            totalPoints={results.totalPoints}
+            totalCredits={results.totalCredits}
+          />
+        </div>
+
+        <ActionButtons
+          onDownload={handleDownloadPDF}
+          onShare={handleShare}
         />
       </div>
     </div>
