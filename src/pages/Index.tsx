@@ -108,19 +108,23 @@ const Index = () => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      // Add logo
-      const logo = new Image();
-      logo.src = '/placeholder.svg';
-      pdf.addImage(logo, 'SVG', 10, 10, 30, 30);
-      
       // Add title
       pdf.setFontSize(20);
-      pdf.text('VTU SGPA Scorecard', 50, 25);
+      pdf.text('VTU SGPA Scorecard', 20, 20);
+      
+      // Add subject details
+      pdf.setFontSize(12);
+      let yPosition = 40;
+      
+      subjects.forEach((subject, index) => {
+        const grade = grades[subject.code] || '-';
+        pdf.text(`${index + 1}. ${subject.name} (${subject.code}) - Credits: ${subject.credits}, Grade: ${grade}`, 20, yPosition);
+        yPosition += 10;
+      });
       
       // Add scorecard content
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 45, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'PNG', 0, yPosition, pdfWidth, 80);
       
       pdf.save('vtu-sgpa-scorecard.pdf');
       
