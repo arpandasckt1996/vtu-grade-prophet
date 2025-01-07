@@ -217,7 +217,6 @@ const Index = () => {
       
       <main className="flex-grow">
         <div id="calculator" className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-          {/* Add semantic HTML structure for better SEO */}
           <article className="max-w-3xl mx-auto space-y-8">
             <header className="text-center">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">VTU SGPA Calculator</h1>
@@ -306,7 +305,6 @@ const Index = () => {
               onDownload={handleDownloadPDF}
               onShare={handleShare}
             />
-          </div>
           </article>
         </div>
 
