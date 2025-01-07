@@ -51,24 +51,100 @@ const FAQ = () => {
 const faqItems = [
   {
     value: "item-1",
-    question: "How is SGPA calculated in VTU?",
-    answer: "SGPA is calculated by dividing the sum of the product of the grade points and the credits for all subjects by the total credits. The formula is: SGPA = Σ(Credits × Grade Points) / ΣCredits."
+    question: "How to calculate CGPA from SGPA?",
+    answer: "To calculate CGPA from SGPA, sum up all the SGPAs of the semesters and divide the total by the number of semesters. Formula: CGPA = Sum of all SGPAs / Number of semesters."
   },
   {
     value: "item-2",
-    question: "Can I save my results?",
-    answer: "Yes! You can download your results as a PDF or share them directly using the share button provided in the calculator."
+    question: "How to calculate SGPA?",
+    answer: "SGPA is calculated by dividing the total credit points earned in a semester by the total credits. Formula: SGPA = Σ(Credit × Grade Point) / ΣCredits."
   },
   {
     value: "item-3",
-    question: "What grade points are assigned to each grade?",
-    answer: "In VTU, grade points are assigned as follows: S: 10, A: 9, B: 8, C: 7, D: 6, E: 4, F: 0"
+    question: "How to calculate percentage from SGPA?",
+    answer: "To convert SGPA to percentage, multiply the SGPA by 10 and subtract 7.5. Formula: Percentage = (SGPA × 10) − 7.5."
   },
   {
     value: "item-4",
-    question: "Is this calculator official?",
-    answer: "While this calculator is not officially affiliated with VTU, it follows the official VTU grading system and calculation methods to provide accurate results."
+    question: "How to calculate SGPA from marks?",
+    answer: "To calculate SGPA from marks, convert the marks into grade points using the university's grading scale. Then apply the SGPA formula: SGPA = Σ(Credit × Grade Point) / ΣCredits."
+  },
+  {
+    value: "item-5",
+    question: "How to calculate SGPA into percentage?",
+    answer: "Convert SGPA into a percentage by multiplying it with the conversion factor provided by your university. Common formula: Percentage = (SGPA × 10) − 7.5."
+  },
+  {
+    value: "item-6",
+    question: "How to calculate SGPA in VTU?",
+    answer: "For VTU, SGPA is calculated using the standard formula: SGPA = Σ(Credit × Grade Point) / ΣCredits. Refer to VTU's grading guidelines for grade point mapping."
+  },
+  {
+    value: "item-7",
+    question: "How to calculate SGPA to CGPA?",
+    answer: "Add up all the SGPAs and divide the sum by the number of semesters to get the CGPA."
+  },
+  {
+    value: "item-8",
+    question: "How is SGPA calculated?",
+    answer: "SGPA is calculated by multiplying the credit points of each subject by the grade points earned, summing these values, and dividing by the total credits."
+  },
+  {
+    value: "item-9",
+    question: "How SGPA is calculated?",
+    answer: "SGPA is determined by summing the product of credits and grade points for all subjects in a semester and dividing by the total credits."
+  },
+  {
+    value: "item-10",
+    question: "How to calculate SGPA of a semester?",
+    answer: "Add the total grade points earned across subjects in the semester, multiply each by its respective credits, then divide by the sum of credits."
+  },
+  {
+    value: "item-11",
+    question: "How to calculate SGPA in Calicut University?",
+    answer: "In Calicut University, use the standard SGPA formula. Refer to the university grading scale for specific conversions of marks to grade points."
+  },
+  {
+    value: "item-12",
+    question: "How to calculate SGPA in KTU?",
+    answer: "Calculate SGPA in KTU using the formula: SGPA = Σ(Credit × Grade Point) / ΣCredits. KTU provides grade point details in its grading policy."
+  },
+  {
+    value: "item-13",
+    question: "How to calculate total SGPA of all semesters?",
+    answer: "Add up the SGPAs of all semesters and divide by the number of semesters to get the average SGPA."
+  },
+  {
+    value: "item-14",
+    question: "How to calculate SGPA from percentage?",
+    answer: "Convert the percentage to SGPA using your university's prescribed formula. Common conversion: SGPA = (Percentage + 7.5) / 10."
+  },
+  {
+    value: "item-15",
+    question: "How is CGPA calculated from SGPA?",
+    answer: "CGPA is calculated by averaging the SGPAs of all semesters. Add all the SGPAs and divide by the total number of semesters."
+  },
+  {
+    value: "item-16",
+    question: "How to calculate SGPA to GPA?",
+    answer: "Many universities equate SGPA and GPA for simplicity. If required, convert SGPA to GPA using a scale conversion provided by the institution."
+  },
+  {
+    value: "item-17",
+    question: "How to calculate percentage to SGPA?",
+    answer: "Use the formula: SGPA = (Percentage + 7.5) / 10."
+  },
+  {
+    value: "item-18",
+    question: "How to calculate marks from SGPA?",
+    answer: "Marks can be back-calculated from SGPA using grade points and credit weights provided by the institution."
+  },
+  {
+    value: "item-19",
+    question: "How to calculate CGPA using SGPA?",
+    answer: "Average the SGPAs of all semesters. Add them up and divide by the number of semesters to get CGPA."
   }
 ];
+
 
 export default FAQ;
