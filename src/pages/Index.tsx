@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { FormulaDisplay } from "@/components/FormulaDisplay";
 import { ActionButtons } from "@/components/ActionButtons";
+import { GradeDistribution } from "@/components/GradeDistribution";
+import { GradeReference } from "@/components/GradeReference";
 import Header from "@/components/Header";
 import Content from "@/components/Content";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Subject {
@@ -266,10 +266,12 @@ const Index = () => {
                 totalCredits={results.totalCredits}
                 totalPoints={results.totalPoints}
               />
+              <GradeDistribution grades={grades} />
               <FormulaDisplay
                 totalPoints={results.totalPoints}
                 totalCredits={results.totalCredits}
               />
+              <GradeReference />
             </div>
 
             <ActionButtons
