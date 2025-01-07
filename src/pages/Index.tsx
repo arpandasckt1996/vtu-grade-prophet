@@ -13,6 +13,8 @@ import Content from "@/components/Content";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 interface Subject {
   code: string;
@@ -215,11 +217,12 @@ const Index = () => {
       
       <main className="flex-grow">
         <div id="calculator" className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-          <div className="max-w-3xl mx-auto space-y-8">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">VTU SGPA Calculator</h2>
+          {/* Add semantic HTML structure for better SEO */}
+          <article className="max-w-3xl mx-auto space-y-8">
+            <header className="text-center">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">VTU SGPA Calculator</h1>
               <p className="text-gray-600">Calculate your Semester Grade Point Average</p>
-            </div>
+            </header>
 
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <div className="grid grid-cols-5 gap-4 mb-4 px-4 text-sm font-medium text-gray-500">
@@ -304,6 +307,7 @@ const Index = () => {
               onShare={handleShare}
             />
           </div>
+          </article>
         </div>
 
         <Content />
