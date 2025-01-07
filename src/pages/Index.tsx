@@ -12,7 +12,7 @@ import Header from "@/components/Header";
 import Content from "@/components/Content";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface Subject {
   code: string;
@@ -61,19 +61,44 @@ const Index = () => {
   };
 
   const handleAddSubject = () => {
-    if (newSubject.code && newSubject.name && newSubject.credits) {
-      const updatedSubjects = [
-        ...subjects,
-        { ...newSubject, credits: Number(newSubject.credits) },
-      ];
-      setSubjects(updatedSubjects);
-      setGrades((prev) => ({ ...prev, [newSubject.code]: "" }));
-      setNewSubject({ code: "", name: "", credits: "" });
+    if (!newSubject.code) {
       toast({
-        title: "Subject Added",
-        description: "New subject has been added successfully.",
+        title: "Missing Subject Code",
+        description: "Please enter a subject code before adding.",
+        variant: "destructive",
       });
+      return;
     }
+
+    if (!newSubject.name) {
+      toast({
+        title: "Missing Subject Name",
+        description: "Please enter a subject name before adding.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!newSubject.credits) {
+      toast({
+        title: "Missing Credits",
+        description: "Please specify the number of credits for this subject.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const updatedSubjects = [
+      ...subjects,
+      { ...newSubject, credits: Number(newSubject.credits) },
+    ];
+    setSubjects(updatedSubjects);
+    setGrades((prev) => ({ ...prev, [newSubject.code]: "" }));
+    setNewSubject({ code: "", name: "", credits: "" });
+    toast({
+      title: "Subject Added",
+      description: "New subject has been added successfully.",
+    });
   };
 
   const handleUpdateSubject = (index: number, code: string, name: string, credits: number) => {
