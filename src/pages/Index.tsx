@@ -6,6 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { FormulaDisplay } from "@/components/FormulaDisplay";
 import { ActionButtons } from "@/components/ActionButtons";
+import Header from "@/components/Header";
+import Content from "@/components/Content";
+import FAQ from "@/components/FAQ";
+import Footer from "@/components/Footer";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useToast } from "@/components/ui/use-toast";
@@ -181,94 +185,105 @@ const Index = () => {
   const results = calculateSGPA();
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">VTU SGPA Calculator</h1>
-          <p className="text-gray-600">Calculate your Semester Grade Point Average</p>
-        </div>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      
+      <main className="flex-grow">
+        <div id="calculator" className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+          <div className="max-w-3xl mx-auto space-y-8">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">VTU SGPA Calculator</h2>
+              <p className="text-gray-600">Calculate your Semester Grade Point Average</p>
+            </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <div className="grid grid-cols-5 gap-4 mb-4 px-4 text-sm font-medium text-gray-500">
-            <div>Code</div>
-            <div>Subject</div>
-            <div className="text-center">Credits</div>
-            <div>Grade</div>
-            <div className="text-right">Actions</div>
-          </div>
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <div className="grid grid-cols-5 gap-4 mb-4 px-4 text-sm font-medium text-gray-500">
+                <div>Code</div>
+                <div>Subject</div>
+                <div className="text-center">Credits</div>
+                <div>Grade</div>
+                <div className="text-right">Actions</div>
+              </div>
 
-          <div className="space-y-2">
-            {subjects.map((subject, index) => (
-              <SubjectRow
-                key={subject.code}
-                subjectCode={subject.code}
-                subjectName={subject.name}
-                credits={subject.credits}
-                grade={grades[subject.code]}
-                onGradeChange={(grade) =>
-                  setGrades((prev) => ({ ...prev, [subject.code]: grade }))
-                }
-                onRemove={() => handleRemoveSubject(subject.code)}
-                onUpdate={(code, name, credits) => 
-                  handleUpdateSubject(index, code, name, credits)
-                }
-              />
-            ))}
-          </div>
+              <div className="space-y-2">
+                {subjects.map((subject, index) => (
+                  <SubjectRow
+                    key={subject.code}
+                    subjectCode={subject.code}
+                    subjectName={subject.name}
+                    credits={subject.credits}
+                    grade={grades[subject.code]}
+                    onGradeChange={(grade) =>
+                      setGrades((prev) => ({ ...prev, [subject.code]: grade }))
+                    }
+                    onRemove={() => handleRemoveSubject(subject.code)}
+                    onUpdate={(code, name, credits) => 
+                      handleUpdateSubject(index, code, name, credits)
+                    }
+                  />
+                ))}
+              </div>
 
-          <div className="mt-4 space-y-4">
-            <div className="grid grid-cols-5 gap-4">
-              <Input
-                placeholder="Code"
-                value={newSubject.code}
-                onChange={(e) =>
-                  setNewSubject((prev) => ({ ...prev, code: e.target.value }))
-                }
-              />
-              <Input
-                placeholder="Subject Name"
-                value={newSubject.name}
-                onChange={(e) =>
-                  setNewSubject((prev) => ({ ...prev, name: e.target.value }))
-                }
-              />
-              <Input
-                type="number"
-                placeholder="Credits"
-                value={newSubject.credits}
-                onChange={(e) =>
-                  setNewSubject((prev) => ({ ...prev, credits: e.target.value }))
-                }
-              />
-              <div className="col-span-2">
-                <Button
-                  onClick={handleAddSubject}
-                  className="w-full flex items-center justify-center gap-2"
-                >
-                  <Plus className="h-4 w-4" /> Add Subject
-                </Button>
+              <div className="mt-4 space-y-4">
+                <div className="grid grid-cols-5 gap-4">
+                  <Input
+                    placeholder="Code"
+                    value={newSubject.code}
+                    onChange={(e) =>
+                      setNewSubject((prev) => ({ ...prev, code: e.target.value }))
+                    }
+                  />
+                  <Input
+                    placeholder="Subject Name"
+                    value={newSubject.name}
+                    onChange={(e) =>
+                      setNewSubject((prev) => ({ ...prev, name: e.target.value }))
+                    }
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Credits"
+                    value={newSubject.credits}
+                    onChange={(e) =>
+                      setNewSubject((prev) => ({ ...prev, credits: e.target.value }))
+                    }
+                  />
+                  <div className="col-span-2">
+                    <Button
+                      onClick={handleAddSubject}
+                      className="w-full flex items-center justify-center gap-2"
+                    >
+                      <Plus className="h-4 w-4" /> Add Subject
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
+
+            <div ref={resultsRef}>
+              <ResultCard
+                sgpa={results.sgpa}
+                totalCredits={results.totalCredits}
+                totalPoints={results.totalPoints}
+              />
+              <FormulaDisplay
+                totalPoints={results.totalPoints}
+                totalCredits={results.totalCredits}
+              />
+            </div>
+
+            <ActionButtons
+              onDownload={handleDownloadPDF}
+              onShare={handleShare}
+            />
           </div>
         </div>
 
-        <div ref={resultsRef} className="space-y-6">
-          <ResultCard
-            sgpa={results.sgpa}
-            totalCredits={results.totalCredits}
-            totalPoints={results.totalPoints}
-          />
-          <FormulaDisplay
-            totalPoints={results.totalPoints}
-            totalCredits={results.totalCredits}
-          />
-        </div>
+        <Content />
+        <FAQ />
+      </main>
 
-        <ActionButtons
-          onDownload={handleDownloadPDF}
-          onShare={handleShare}
-        />
-      </div>
+      <Footer />
     </div>
   );
 };
